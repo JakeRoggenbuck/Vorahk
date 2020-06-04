@@ -12,7 +12,6 @@ client = discord.Client()
 async def on_ready():
     print(f'We have logged in as {client.user}')
 
-
 @client.event
 async def on_message(message):
     for playlist in data.playlists:
@@ -23,7 +22,16 @@ async def on_message(message):
 
 @client.event
 async def on_raw_reaction_add(payload):
-    if payload.emoji.name == "🔷":
-        print("ye")
-
+    if payload.emoji.name == "🛡️":
+        channel = client.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        user = message.author.name
+        if str(payload.user_id) != "633749005909884929":
+            exit()
+        words = message.content.split()[1:]
+        song = ''.join(f"{c} " for c in words)
+        with open("music.txt", "a") as f:
+            f.write(f"{song}:{user}\n")
+        await message.add_reaction("👌")
+        
 client.run(token)
